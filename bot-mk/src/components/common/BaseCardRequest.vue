@@ -22,9 +22,9 @@
     </div>
 </template>
 <script setup lang="ts">
-import type { Request } from '@/helper/types';
+import type { Deals, Request } from '@/helper/types';
 const props = defineProps<{
-    request: Request
+    request: Request | Deals
     keys: []
 }>()
 </script>

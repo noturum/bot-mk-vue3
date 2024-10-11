@@ -1,65 +1,9 @@
-@import './base.css';
-
-#app {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  font-weight: normal;
-}
-
-a,
-.green {
-  text-decoration: none;
-  color: hsla(160, 100%, 37%, 1);
-  transition: 0.4s;
-  padding: 3px;
-}
-
-@media (hover: hover) {
-  a:hover {
-    background-color: hsla(160, 100%, 37%, 0.2);
-  }
-}
-
-@media (min-width: 1024px) {
-  body {
-    display: flex;
-    place-items: center;
-  }
-
-  #app {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    padding: 0 2rem;
-  }
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 :root {
   --primary-text-color: #ffffff;
   --primary-bg-color: #141718;
   --second-text-color: #6f6f6f;
   --input-bg-color: #232627;
-  --main-font: 15px 'Urbanist', sans-serif;
+  --main-font: 15px "Urbanist", sans-serif;
   --btn-br: 15px;
 }
 
@@ -75,7 +19,6 @@ body {
   color: var(--primary-text-color) !important;
   box-shadow: none !important;
 }
-
 
 .form-label {
   color: var(--primary-text-color);
@@ -100,23 +43,22 @@ body {
 .form-control {
   display: block;
   width: 100%;
-  height: calc(1.5em + .75rem + 2px);
-  padding: .375rem .75rem;
+  height: calc(1.5em + 0.75rem + 2px);
+  padding: 0.375rem 0.75rem;
   font-size: 1rem;
   font-weight: 400;
   line-height: 1.5;
   color: var(--second-text-color);
   background-color: var(--input-bg-color);
   background-clip: padding-box;
-  border: 0px solid #7D7D7D;
+  border: 0px solid #7d7d7d;
   border-radius: var(--btn-br);
-  transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
 
 .welcome-container {
   height: 100vh;
 }
-
 
 .logo {
   width: 45px;
@@ -124,8 +66,8 @@ body {
 }
 
 #content {
-  overflow-y: auto;
   margin-bottom: 70px;
+  height: calc(100% - 140px);
 }
 
 .welcome-title {
@@ -185,11 +127,10 @@ nav-item {
 }
 
 .notify {
-  background-color: var(--input-bg-color)
+  background-color: var(--input-bg-color);
 }
 
 .card-container {
-
   min-width: 200px;
   font-size: 10px;
   padding: 10px 18px 0;
@@ -229,7 +170,7 @@ nav-item {
   margin-bottom: 50px;
   border: 5px dashed;
   border-radius: 16px;
-  height: 20vh;
+  min-height: 20vh;
   align-items: center;
 }
 
@@ -254,12 +195,10 @@ nav-item {
   justify-content: center;
 }
 
-
 .left-btn {
   left: 0 !important;
   bottom: 0 !important;
   border-radius: 25px 120px 25px 50px;
-
 }
 
 .btn-group {
@@ -321,14 +260,14 @@ nav-item {
   overflow-y: auto;
   position: absolute;
   background-color: var(--input-bg-color);
-  border: 1px solid #7D7D7D;
+  border: 1px solid #7d7d7d;
   border-radius: 8px;
   display: block;
   min-height: 20px;
 }
 
 .dropdown-item {
-  border-bottom: 1px solid #7D7D7D;
+  border-bottom: 1px solid #7d7d7d;
   padding: 10px;
 }
 
@@ -364,7 +303,6 @@ input {
   margin: auto 0;
 }
 
-
 .route-dots {
   align-self: stretch;
   display: flex;
@@ -377,7 +315,12 @@ input {
   font-size: 20px;
 }
 
-
+.invalid-input {
+  width: 100%;
+  margin-top: 0.25rem;
+  font-size: 0.875em;
+  color: red;
+}
 .plane-icon {
   aspect-ratio: 1;
   object-fit: contain;

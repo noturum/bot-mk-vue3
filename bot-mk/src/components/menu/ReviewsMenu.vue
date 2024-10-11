@@ -1,19 +1,15 @@
 <template>
-    <nav class="reviews-actions d-flex flex-column text-white fw-normal p-2">
-        <button class="btn btn-custom mt-4" @click="menues['review']=233">Написать отзыв</button>
-        <button class="btn btn-custom mt-4" @click="emits('click')">Проверить пользователя</button>
-        <button class="btn btn-custom mt-4" @click="emits('click')">Мои отзывы</button>
-    </nav>
+  <nav class="reviews-actions d-flex flex-column text-white fw-normal p-2">
+    <BaseButton @click="emits('setMenu','createReview')"> Написать отзыв </BaseButton>
+    <BaseButton @click="emits('setMenu','checkUser')"> Проверить пользователя </BaseButton>
+    <BaseButton @click="emits('setMenu','myReviews')"> Мои отзывы </BaseButton>
+  </nav>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-
+import BaseButton from "../common/BaseButton.vue";
 const emits = defineEmits<{
-    click: []
-}>()
-const props = defineProps<{
-    menues: { [key: string]: any }
-}>()
-const menuList = ref(props.menues)
+  click: [];
+  setMenu: [tab: string];
+}>();
 </script>
