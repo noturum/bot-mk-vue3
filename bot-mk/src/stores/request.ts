@@ -1,16 +1,31 @@
-import { ref } from "vue";
+import { reactive } from "vue";
 import { defineStore } from "pinia";
-import axios from "axios";
-import type { Request } from "@/helper/types";
-import { MY_REQUEST } from "@/helper/strings";
-import { useAuthStore } from "./auth";
+import type { Request, SearchRequest } from "@/helper/types";
 export const useRequestStore = defineStore("request", () => {
-  const requests = ref<[Request]>([{} as Request]);
-  function get_request() {
-    axios.get(MY_REQUEST).then((response) => {
-      console.log(response.data);
-      requests.value = response.data.items;
-    });
+  const baseForm = {
+    id: "",
+    cityIn: "",
+    cityTo: "",
+    dateIn: "",
+    contacts: "",
+    description: "",
+    mode: "SEND",
+    transfers: [],
+  };
+  const requestForm = reactive<Request>({
+    cityIn: "",
+    cityTo: "",
+    dateIn: "",
+    contacts: "",
+    description: "",
+    mode: "SEND",
+    transfers: [],
+  } as Request);
+  function toForm(form: SearchRequest | Request) {
+    Object.assign(requestForm, form);
   }
-  return { requests, get_request };
+  function clearForm() {
+    Object.assign(requestForm, baseForm);
+  }
+  return { requestForm, toForm, clearForm };
 });

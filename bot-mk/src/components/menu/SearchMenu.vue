@@ -1,27 +1,39 @@
 <template>
   <div class="container mt-5" v-show="!openResult">
-    <form id="search-form" @submit.prevent="validate">
+    <form id="search-form" @submit.prevent="submitForm">
       <div class="form-row">
         <BaseSelect id="mode" :options="selectOptions" v-model:data="form.mode">
           Найти
         </BaseSelect>
-        <BaseInput id="cityIn" type="search" v-model:data="form.cityIn">
+        <BaseInput
+          id="cityIn"
+          type="search"
+          v-model:data="form.cityIn"
+          :errors="errorsForm.cityIn"
+        >
           Город отправки
         </BaseInput>
-        <BaseInput id="cityTo" type="search" v-model:data="form.cityTo">
+        <BaseInput
+          id="dateIn"
+          type="date"
+          v-model:data="form.dateIn"
+          :errors="errorsForm.dateIn"
+        >
+          Дата отправки
+        </BaseInput>
+        <BaseInput
+          id="cityTo"
+          type="search"
+          v-model:data="form.cityTo"
+          :errors="errorsForm.cityTo"
+        >
           Город прибытия
         </BaseInput>
-        <BaseInput id="dateIn" type="date" v-model:data="form.dateIn">
-          Город прибытия
-        </BaseInput>
-        <BaseButton @click="getSearch(form), (openResult = !openResult)">
-          Отправить
-        </BaseButton>
+
+        <BaseButton> Отправить </BaseButton>
       </div>
     </form>
-    <BaseButton @click="showRequestModal = true">
-      Вставить из заявки
-    </BaseButton>
+    <BaseButton @click="openMyRequest()"> Вставить из заявки </BaseButton>
   </div>
   <Teleport to="body">
     <BaseModal
@@ -58,7 +70,7 @@
             <p>-</p>
           </div>
         </div>
-        <img class="trip-icon" alt="Plane icon" />
+        <img class="trip-icon" :class="form.mode == 'DELY' ? 'dely' : 'send'" />
         <div class="city-info">
           <div class="route-dots">
             <p>-</p>
@@ -70,7 +82,11 @@
         </div>
       </div>
 
-      <button class="unwrap-button" id="unwrap-button">
+      <button
+        @click="openResult = false"
+        class="unwrap-button"
+        id="unwrap-button"
+      >
         <img class="unwrap-icon" alt="" />
       </button>
     </div>
@@ -78,7 +94,19 @@
     <div
       class="card-container flex-column align-self-center"
       id="card-container"
-    ></div>
+    >
+      <div v-if="!searchResults.length" class="card-custom mb-3">
+        <div class="card-body">
+          <h5 class="card-title">Нет подходящих заявок</h5>
+        </div>
+        <BaseButton @click="createRequest()"> Создать заявку </BaseButton>
+      </div>
+      <BaseCardRequest
+        v-for="request in searchResults"
+        :request="request"
+        :keys="[]"
+      ></BaseCardRequest>
+    </div>
   </div>
 
   <div
@@ -115,26 +143,66 @@ import BaseInput from "../common/BaseInput.vue";
 import BaseSelect from "../common/BaseSelect.vue";
 import BaseModal from "../common/BaseModal.vue";
 import BaseCardRequest from "../common/BaseCardRequest.vue";
-import { useRequestStore } from "@/stores/request";
-import { useSearchStore } from "@/stores/search";
+import { useUserStore } from "@/stores/user";
 import type { SearchRequest } from "@/helper/types";
 import type { Request } from "@/helper/types";
-import { reactive, ref } from "vue";
+import { useRequestStore } from "@/stores/request";
+import { reactive, ref, computed, toRaw } from "vue";
+import { isEmpty, isExpired, validate } from "@/helper/validators";
+import api from "@/Api";
+const requestStore = useRequestStore();
+const emits = defineEmits<{
+  setMenu: [key: string];
+}>();
+const userStore = useUserStore();
+const requests = computed(() => {
+  return userStore.myRequest;
+});
 const showRequestModal = ref(false);
 const openResult = ref(false);
-const { getSearch } = useSearchStore();
-const { requests } = useRequestStore();
+const searchResults = ref<Request[]>([]);
+const { getMyRequest } = userStore;
+const openMyRequest = () => {
+  showRequestModal.value = true;
+  if (!requests.value.length) getMyRequest();
+};
 const setForm = (request: Request) => {
-  console.log(request.cityIn)
   form.cityIn = request.cityIn;
   form.cityTo = request.cityTo;
   form.dateIn = request.dateIn;
   showRequestModal.value = false;
 };
-const validate = () => {};
 const form = reactive({
   mode: "DELY",
+  cityIn: "",
+  cityTo: "",
+  dateIn: "",
 } as SearchRequest);
+const errorsForm = ref({} as Partial<SearchRequest>);
+const getForm = () => {
+  return toRaw(form);
+};
+const submitForm = () => {
+  let { errors, isValid } = validate(form, {
+    cityIn: [isEmpty],
+    cityTo: [isEmpty],
+    dateIn: [isEmpty, isExpired],
+  });
+  errorsForm.value = errors;
+  if (isValid) {
+    console.log("valid");
+    api.post<Request[]>("/search", getForm()).then((response) => {
+      searchResults.value = response;
+      openResult.value = true;
+    });
+  }
+};
+const createRequest = () => {
+  let form = getForm();
+  form.mode = form.mode == "DELY" ? "SEND" : "DELY";
+  requestStore.toForm(getForm());
+  emits("setMenu", "createRequest");
+};
 const selectOptions = {
   SEND: "Отправителя",
   DELY: "Доставщика",

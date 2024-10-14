@@ -1,8 +1,20 @@
 import { ref, computed } from "vue";
 import { defineStore } from "pinia";
-import axios from "axios";
-import type { User, Review, Request, Deals } from "@/helper/types";
-import { MY_REQUEST } from "@/helper/strings";
+import api from "@/Api";
+import type {
+  User,
+  Review,
+  Deals,
+  Request,
+} from "@/helper/types";
+import {
+  MY_REQUEST,
+  MY_DEALS,
+  SUGGESTION,
+  REVIEWS_BY_ME,
+  ARCHIVE,
+  MY_REVIEWS,
+} from "@/helper/strings";
 export const useUserStore = defineStore("user", () => {
   const user = ref<User>({} as User);
   const myReviews = ref<Review[]>([]);
@@ -14,44 +26,38 @@ export const useUserStore = defineStore("user", () => {
 
   const getReviewsByMe = () => {
     reviewsByMe.value = [];
-    axios.get(MY_REQUEST).then((response) => {
-      console.log(response.data);
-      reviewsByMe.value = response.data.items;
+    api.get<Review[]>(REVIEWS_BY_ME).then((response) => {
+      reviewsByMe.value = response;
     });
   };
   const getArchive = () => {
     archive.value = [];
-    axios.get(MY_REQUEST).then((response) => {
-      console.log(response.data);
-      archive.value = response.data.items;
+    api.get<Request[]>(ARCHIVE).then((response) => {
+      archive.value = response;
     });
   };
   const getMyRequest = () => {
     myRequest.value = [];
-    axios.get(MY_REQUEST).then((response) => {
-      console.log(response.data);
-      myRequest.value = response.data.items;
+    api.get<Request[]>(MY_REQUEST).then((response) => {
+      myRequest.value = response;
     });
   };
   const getMyReviews = () => {
     myReviews.value = [];
-    axios.get("").then((response) => {
-      console.log(response.data);
-      myReviews.value = response.data.items;
+    api.get<Review[]>(MY_REVIEWS).then((response) => {
+      myReviews.value = response;
     });
   };
   const getDeals = () => {
     myDeals.value = [];
-    axios.get("").then((response) => {
-      console.log(response.data);
-      myDeals.value = response.data.items;
+    api.get<Deals[]>(MY_DEALS).then((response) => {
+      myDeals.value = response;
     });
   };
   const getSuggestion = () => {
     suggestions.value = [];
-    axios.get("").then((response) => {
-      console.log(response.data);
-      suggestions.value = response.data.items;
+    api.get<Request[]>(SUGGESTION).then((response) => {
+      suggestions.value = response;
     });
   };
 

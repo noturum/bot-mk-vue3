@@ -1,20 +1,18 @@
 <template>
-    <form id="createForm" class="mb-4 w-100" @submit.prevent>
-      <BaseInput type="search" id="contacts" v-model:data="form.contacts">
-        Укажите номер или никнейм пользователя
-      </BaseInput>
-      <BaseInput type="textarea" id="description" v-model:data="form.review">
-        Напишите отзыв
-      </BaseInput>
-      <BaseButton> Отправить </BaseButton>
-    </form>
-  </template>
-  
-  <script setup lang="ts">
-  import {reactive} from "vue";
-  import BaseInput from "../common/BaseInput.vue";
-  import BaseButton from "../common/BaseButton.vue";
-  import type { CreateReview } from "@/helper/types";
-  const form = reactive({} as CreateReview);
-  </script>
-  
+  <div>
+    <div v-if="!userStore.myReviews.length">Нет отзывов</div>
+    <ReviewCard v-else v-for="review in userStore.myReviews" :review="review">
+    </ReviewCard>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { onMounted } from "vue";
+import ReviewCard from "../common/ReviewCard.vue";
+import { useUserStore } from "@/stores/user";
+const userStore = useUserStore();
+const { getMyReviews } = userStore;
+onMounted(() => {
+  getMyReviews();
+});
+</script>

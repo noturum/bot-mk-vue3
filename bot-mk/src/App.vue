@@ -1,6 +1,7 @@
 <template>
-  <BaseToast />
-  <component v-if="auth.authData.error" :is="menues['error']" />
+  <Teleport to="body"><BaseToast /></Teleport>
+
+  <component v-if="authStore.error" :is="menues['error']" />
   <div
     v-else
     class="container welcome-container d-flex flex-column align-items-center justify-content-start mx-auto pt-5 overflow-auto"
@@ -11,14 +12,12 @@
         class="logo back_btn"
         @click="linkNavMenu(lastMenu)"
       />
-      <h5
-        class="title text-center align-items-center position-absolute w-auto start-50 translate-middle-x mt-2"
-      >
+      <h5 class="title text-center align-items-center w-auto mt-2 flex-grow-1">
         {{ title }}
       </h5>
     </div>
     <div
-      class="container mt-4 d-flex flex-column align-items-center"
+      class="container mt-4 d-flex flex-column align-items-center overflow-auto"
       id="content"
     >
       <component :is="menues[activeMenu]" @set-menu="linkNavMenu"></component>
@@ -54,7 +53,6 @@
 </template>
 <script setup lang="ts">
 import { onMounted, ref, watch } from "vue";
-import axios from "axios";
 import BaseNavElement from "@/components/common/BaseNavElement.vue";
 import BaseToast from "@/components/common/BaseToast.vue";
 import { getMenues } from "./components/menu/Menues";
@@ -63,7 +61,7 @@ import { useAuthStore } from "./stores/auth";
 import { useCitiesStore } from "./stores/cities";
 import { MENU_TITLES } from "./helper/strings";
 const { getCities } = useCitiesStore();
-const auth = useAuthStore();
+const authStore = useAuthStore();
 const telegram = useTelegramStore();
 const showNav = ref(false);
 const title = ref("");
@@ -83,18 +81,11 @@ watch(activeMenu, (_, old) => {
   lastMenu.value = old;
 });
 onMounted(() => {
-  console.log(import.meta.env)
-  const initData = { id: 22 };
+  const initData = { id: 23 };
   if (initData) {
     telegram.initData = initData;
-    if (!auth.authData.user) {
-      axios.defaults.headers.common["X-User-Id"] = telegram.initData.id;
-      // auth.getUser()
-      getCities();
-      window.Telegram?.WebApp.ready();
-    }
-  } else {
-    // auth.authData.error = true
+    authStore.auth(initData.id);
+    getCities();
   }
 });
 </script>

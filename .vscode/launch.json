@@ -1,0 +1,17 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "type": "chrome",
+        "request": "launch",
+        "name": "Launch Chrome against localhost",
+        "url": "http://localhost:8081",
+        "webRoot": "${workspaceFolder}/src",
+        "sourceMaps": true,
+        "breakOnLoad": true,
+        "skipFiles": ["node_modules/**"],
+        "port": 9222
+      }
+    ]
+  }
+  

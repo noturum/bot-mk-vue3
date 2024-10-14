@@ -1,14 +1,43 @@
 <template>
-  <div v-if="!suggestions || suggestions?.length==0">Нет предложений</div>
-  <BaseCardRequest v-for="deal in suggestions" :request="deal" :keys="[]">
+  <div v-if="!userStore.suggestions || userStore.suggestions?.length == 0">
+    Нет предложений
+  </div>
+  <BaseCardRequest
+    v-for="request in userStore.suggestions"
+    :request="request"
+    :keys="[]"
+  >
+    <template #buttons>
+      <ActionsButton
+        @click="acceptRequest(request)"
+        class="right-btn"
+        ico="accept"
+        :request-id="request.id"
+      >
+      </ActionsButton>
+    </template>
   </BaseCardRequest>
 </template>
 
 <script setup lang="ts">
 import BaseCardRequest from "@/components/common/BaseCardRequest.vue";
+import ActionsButton from "../common/ActionsButton.vue";
 import { useUserStore } from "@/stores/user";
 import { onMounted } from "vue";
-const { getSuggestion, suggestions } = useUserStore();
+import api from "@/Api";
+import type { Request } from "@/helper/types";
+import { ACCEPT_REQUEST } from "@/helper/strings";
+const userStore = useUserStore();
+const { getSuggestion } = userStore;
+const acceptRequest = (request: Request) => {
+  const data = {
+    receiverRequest: request.id,
+    senderRequest: userStore.myRequest[0].id,
+  };
+  api.post(ACCEPT_REQUEST, data).then(() => {
+    getSuggestion();
+  });
+};
 onMounted(() => {
   getSuggestion();
 });

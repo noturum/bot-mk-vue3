@@ -11,8 +11,8 @@
     <BaseInput
       type="textarea"
       id="description"
-      v-model:data="form.review"
-      :errors="errorsForm.review"
+      v-model:data="form.description"
+      :errors="errorsForm.description"
     >
       Напишите отзыв
     </BaseInput>
@@ -21,22 +21,35 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref } from "vue";
+import { reactive, ref, toRaw } from "vue";
 import BaseInput from "../common/BaseInput.vue";
 import BaseButton from "../common/BaseButton.vue";
-import type { CreateReview, ErrorReview } from "@/helper/types";
+import type { Review } from "@/helper/types";
 import { isEmpty, validate } from "@/helper/validators";
-const form = reactive({ contacts: "", review: "" } as CreateReview);
-const errorsForm = ref({} as ErrorReview);
+import { useToastsStore } from "@/stores/toasts";
+import api from "@/Api";
+import { REVIEWS, SEND_REVIEW } from "@/helper/strings";
+const { addToast } = useToastsStore();
+const emits = defineEmits<{
+  setMenu: [tab: string];
+}>();
+const getForm = () => {
+  return toRaw(form);
+};
+const form = reactive({ contacts: "", description: "" } as Review);
+const errorsForm = ref({} as Partial<Review>);
 
 const formSubmit = () => {
   let { errors, isValid } = validate(form, {
-    contacts: isEmpty,
-    review: isEmpty,
+    contacts: [isEmpty],
+    description: [isEmpty],
   });
   errorsForm.value = errors;
   if (isValid) {
-    console.log("Send datta");
+    api.post(REVIEWS, getForm()).then(() => {
+      emits("setMenu", "main");
+      addToast(SEND_REVIEW, 2000);
+    });
   }
 };
 </script>

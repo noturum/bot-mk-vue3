@@ -1,29 +1,34 @@
 <template>
-  <label class="form-label" for="date_in">
-    <slot />
-  </label>
-  <input
-    v-if="type != 'textarea'"
-    class="form-control mb-2"
-    :class="{ invalid: errors }"
-    :placeholder="errors"
-    :id="id"
-    :name="id"
-    :type="type"
-    value=""
-    v-model="data"
-    @focusin="showed = true"
-    @focusout="hideData"
-  />
-  <textarea
-    v-else
-    class="form-control mb-2"
-    :id="id"
-    :name="id"
-    :class="{ invalid: errors }"
-    v-model="data"
-    :placeholder="errors"
-  />
+  <div class="mb-3 position-relative">
+    <div class="position-relative transfer-form">
+      <label class="form-label" for="transfer_city">Город пересадки</label>
+      <div class="d-flex mt-1 align-items-start">
+        <input
+          class="form-control"
+          :name="name"
+          type="hidden"
+          v-model="transferId"
+        />
+        <input
+          class="form-control"
+          :name="name"
+          :class="{ invalid: errors }"
+          :placeholder="errors"
+          type="search"
+          v-model="data"
+          @focusin="showed = true"
+          @focusout="hideData"
+        />
+        <button
+          @click="emits('click')"
+          type="button"
+          class="btn remove_transfer ml-2"
+        >
+          X
+        </button>
+      </div>
+    </div>
+  </div>
   <div
     v-if="list"
     v-show="showed && datalist"
@@ -42,15 +47,18 @@
 </template>
 <script setup lang="ts">
 import { watch, ref } from "vue";
+const transferId = defineModel<any>("transferId");
 const data = defineModel<any>("data");
 watch(data, (e) => {
   buildData(e.toLowerCase());
 });
+const emits = defineEmits<{
+  click: [];
+}>();
 const showed = ref(false);
 const list = ref<string[]>([]);
 const props = defineProps<{
-  id: string;
-  type: string;
+  name: string;
   datalist?: string[];
   errors?: string;
 }>();

@@ -1,10 +1,3 @@
-export interface Request {
-  icon?: string;
-  cityIn: string;
-  cityTo: string;
-  dateIn: string;
-  description: string;
-}
 export interface User {
   id: number;
   contacts: number;
@@ -12,15 +5,20 @@ export interface User {
   username: string;
 }
 export interface Auth {
-  error: boolean;
+  id: number;
 }
 export interface InitData {
   id: number;
 }
-export interface CreateRequest {
+export interface Transfer {
+  id?: number;
+  city: string;
+}
+export interface Request {
+  id?: number;
   mode: string;
   cityIn: string;
-  transfers: [];
+  transfers: Transfer[];
   dateIn: string;
   cityTo: string;
   description: string;
@@ -28,6 +26,7 @@ export interface CreateRequest {
 }
 export interface ErrorRequest {
   cityIn?: string;
+  transfers?: [];
   dateIn?: string;
   cityTo?: string;
   description?: string;
@@ -39,30 +38,21 @@ export interface SearchRequest {
   dateIn: string;
   cityTo: string;
 }
-export interface CreateReview {
+export interface Review {
+  id?: number;
   contacts: string;
-  review: string;
-}
-export interface ErrorReview {
-  contacts?: string;
-  review?: string;
+  description: string;
 }
 export interface CheckUser {
   user: string;
 }
-export interface ErrorCheckUser {
-  user?: string;
-}
-export interface CreateReport {
-  report: string;
-}
-export interface ErrorReport {
-  report?: string;
-}
-export interface Review {
-  date?: string;
-  title?: string;
+export interface Report {
+  contacts: string;
+  description: string;
 }
 export interface Deals extends Request {
-  
+  status: string;
+  userName: string;
+  dealId: number;
+  role: string;
 }

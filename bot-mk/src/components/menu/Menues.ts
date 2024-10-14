@@ -2,8 +2,8 @@ import MainMenu from "@/components/menu/MainMenu.vue";
 import ProfileMenu from "@/components/menu/ProfileMenu.vue";
 import ReviewsMenu from "@/components/menu/ReviewsMenu.vue";
 import SupportMenu from "@/components/menu/SupportMenu.vue";
-import CreateRequestMenu from "@/components/menu/CreateRequestMenu.vue";
-import CreateReviewMenu from "@/components/menu/CreateReviewMenu.vue";
+import RequestMenu from "@/components/menu/CreateRequestMenu.vue";
+import ReviewMenu from "@/components/menu/CreateReviewMenu.vue";
 import ReportMenu from "@/components/menu/ReportMenu.vue";
 import MyReviewsMenu from "@/components/menu/MyReviewsMenu.vue";
 import CheckUserMenu from "@/components/menu/CheckUserMenu.vue";
@@ -16,9 +16,9 @@ export function getMenues() {
     profile: ProfileMenu,
     review: ReviewsMenu,
     support: SupportMenu,
-    createRequest: CreateRequestMenu,
+    createRequest: RequestMenu,
     search: SearchMenu,
-    createReview: CreateReviewMenu,
+    createReview: ReviewMenu,
     checkUser: CheckUserMenu,
     myReviews: MyReviewsMenu,
     report: ReportMenu,

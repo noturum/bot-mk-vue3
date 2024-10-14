@@ -1,19 +1,22 @@
 import { ref } from "vue";
 import { defineStore } from "pinia";
-import axios from "axios";
+import ApiService from "@/Api";
 import type { Auth } from "@/helper/types";
-import { GET_USER } from "@/helper/strings";
+import { AUTH } from "@/helper/strings";
+import api from "@/Api";
 export const useAuthStore = defineStore("auth", () => {
-  const authData = ref<Auth>({ error: false } as Auth);
-  function getUser() {
-    axios
-      .get(GET_USER)
+  const error = ref(false);
+  const id = ref<number>();
+  function auth(uid: number) {
+    let data = { id: uid };
+    api
+      .post<Auth>(AUTH, data)
       .then((response) => {
-        authData.value.user = response.data;
+        if (response?.id == uid) id.value = response.id;
+        else error.value = true;
+        console.log("login succ");
       })
-      .catch((error) => {
-        if (error) authData.value.error = true;
-      });
+      .catch((err) => (error.value = true));
   }
-  return { authData, getUser };
+  return { auth, error, id };
 });
