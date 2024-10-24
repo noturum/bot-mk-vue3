@@ -16,9 +16,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
 import { useToastsStore } from "@/stores/toasts";
-import type { Toast } from "@/stores/toasts";
 const toastStore = useToastsStore();
 const emits = defineEmits<{
   click: [];

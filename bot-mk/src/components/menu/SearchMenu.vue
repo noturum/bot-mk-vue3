@@ -33,28 +33,22 @@
         <BaseButton> Отправить </BaseButton>
       </div>
     </form>
-    <BaseButton @click="openMyRequest()"> Вставить из заявки </BaseButton>
+    <BaseButton @click="openMyRequest"> Вставить из заявки </BaseButton>
   </div>
-  <Teleport to="body">
-    <BaseModal
-      v-if="showRequestModal"
-      style="display: block"
-      @click.self="showRequestModal = false"
+
+  <BaseModal name="myRequests" style="display: block">
+    <h2 style="z-index: 2000">Мои заявки</h2>
+    <div
+      class="modal-content d-flex flex-row justify-content-center overflow-auto"
     >
-      <h2 style="z-index: 2000">Мои заявки</h2>
-      <div
-        class="modal-content d-flex flex-row justify-content-center overflow-auto"
+      <BaseCardRequest
+        v-for="request in userStore.requests"
+        :request="request"
+        @click="setForm(request)"
       >
-        <BaseCardRequest
-          v-for="request in requests"
-          :request="request"
-          :keys="[]"
-          @click="setForm(request)"
-        >
-        </BaseCardRequest>
-      </div>
-    </BaseModal>
-  </Teleport>
+      </BaseCardRequest>
+    </div>
+  </BaseModal>
 
   <div id="results" class="container" v-show="openResult">
     <div class="container flight-route-container">
@@ -99,43 +93,37 @@
         <div class="card-body">
           <h5 class="card-title">Нет подходящих заявок</h5>
         </div>
-        <BaseButton @click="createRequest()"> Создать заявку </BaseButton>
+        <BaseButton @click="createRequest(getForm())">
+          Создать заявку
+        </BaseButton>
       </div>
-      <BaseCardRequest
-        v-for="request in searchResults"
-        :request="request"
-        :keys="[]"
-      ></BaseCardRequest>
+      <BaseCardRequest v-for="request in searchResults" :request="request">
+        <template #buttons>
+          <ActionsButton
+            class="left-btn"
+            @click="acceptRequest(request)"
+            ico="accept"
+          ></ActionsButton>
+        </template>
+      </BaseCardRequest>
     </div>
   </div>
-
-  <div
-    class="modal fade"
-    id="seach_request"
-    data-bs-backdrop="static"
-    data-bs-keyboard="false"
-    tabindex="-1"
-  >
-    <div
-      class="modal-dialog h-100 container d-flex align-items flex-column justify-content-center"
-    >
+  <BaseModal style="display: block" name="acceptRequest">
+    <div class="p-5 w-75 z-3">
       <h4 class="d-flex justify-content-center">
         Для продолжения, нужно создать заявку
       </h4>
       <div class="modal-content d-flex flex-row justify-content-center">
-        <button type="button" class="btn-custom me-2" data-bs-dismiss="modal">
-          Отмена
-        </button>
-        <button
-          type="button"
-          class="btn-custom accept-request"
-          data-bs-dismiss="modal"
+        <BaseButton class="m-3" @click="closeModal('acceptRequest')"
+          >Отмена</BaseButton
         >
-          Создать
-        </button>
+
+        <BaseButton class="m-3" @click="createRequest(selectRequest)"
+          >Создать</BaseButton
+        >
       </div>
     </div>
-  </div>
+  </BaseModal>
 </template>
 <script setup lang="ts">
 import BaseButton from "../common/BaseButton.vue";
@@ -149,29 +137,35 @@ import type { Request } from "@/helper/types";
 import { useRequestStore } from "@/stores/request";
 import { reactive, ref, computed, toRaw } from "vue";
 import { isEmpty, isExpired, validate } from "@/helper/validators";
+import { useModalStore } from "@/stores/modal";
 import api from "@/Api";
+import ActionsButton from "../common/ActionsButton.vue";
 const requestStore = useRequestStore();
+let selectRequest: Request | undefined = undefined;
+const acceptRequest = (request: Request) => {
+  selectRequest = request;
+  openModal("acceptRequest");
+};
 const emits = defineEmits<{
   setMenu: [key: string];
 }>();
+const { openModal, closeModal } = useModalStore();
 const userStore = useUserStore();
-const requests = computed(() => {
-  return userStore.myRequest;
-});
-const showRequestModal = ref(false);
+
 const openResult = ref(false);
 const searchResults = ref<Request[]>([]);
-const { getMyRequest } = userStore;
+const { getRequest } = userStore;
 const openMyRequest = () => {
-  showRequestModal.value = true;
-  if (!requests.value.length) getMyRequest();
+  openModal("myRequests");
+  if (!userStore.requests.length) getRequest();
 };
 const setForm = (request: Request) => {
   form.cityIn = request.cityIn;
   form.cityTo = request.cityTo;
   form.dateIn = request.dateIn;
-  showRequestModal.value = false;
+  closeModal("myRequests");
 };
+
 const form = reactive({
   mode: "DELY",
   cityIn: "",
@@ -197,10 +191,11 @@ const submitForm = () => {
     });
   }
 };
-const createRequest = () => {
-  let form = getForm();
+const createRequest = (form: any) => {
+  closeModal("acceptRequest");
+  form.id = undefined;
   form.mode = form.mode == "DELY" ? "SEND" : "DELY";
-  requestStore.toForm(getForm());
+  requestStore.toForm(form);
   emits("setMenu", "createRequest");
 };
 const selectOptions = {

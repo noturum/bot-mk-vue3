@@ -3,7 +3,7 @@ import { defineStore } from "pinia";
 import type { Request, SearchRequest } from "@/helper/types";
 export const useRequestStore = defineStore("request", () => {
   const baseForm = {
-    id: "",
+    id: null,
     cityIn: "",
     cityTo: "",
     dateIn: "",

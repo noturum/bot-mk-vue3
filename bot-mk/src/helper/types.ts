@@ -3,9 +3,14 @@ export interface User {
   contacts: number;
   fullName: string;
   username: string;
+  blocked: boolean;
 }
 export interface Auth {
   id: number;
+}
+export interface Response {
+  status: string;
+  error?: string;
 }
 export interface InitData {
   id: number;
@@ -23,6 +28,7 @@ export interface Request {
   cityTo: string;
   description: string;
   contacts: string;
+  new?: boolean;
 }
 export interface ErrorRequest {
   cityIn?: string;
@@ -42,9 +48,13 @@ export interface Review {
   id?: number;
   contacts: string;
   description: string;
+  new?: boolean;
 }
 export interface CheckUser {
   user: string;
+}
+export interface UnblockCode {
+  code: string;
 }
 export interface Report {
   contacts: string;
@@ -55,4 +65,5 @@ export interface Deals extends Request {
   userName: string;
   dealId: number;
   role: string;
+  new?: boolean;
 }

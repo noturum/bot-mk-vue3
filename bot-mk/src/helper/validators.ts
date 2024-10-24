@@ -1,9 +1,10 @@
+import { reactive, ref } from "vue";
 import { NOT_IN_DATALIST, INVALID_DATE, FIELD_IS_EMPTY } from "./strings";
 
 export function isEmpty(input: any, field?: string): string | undefined {
   if (field) {
-    
-     return input[field].length>0 ? undefined : FIELD_IS_EMPTY;
+    if (!input) return undefined;
+    return input[field].length > 0 ? undefined : FIELD_IS_EMPTY;
   }
   return input ? undefined : FIELD_IS_EMPTY;
 }
@@ -13,9 +14,9 @@ export function isExpired(input: string): string | undefined {
 export function isInData(input: string, datalist: string[]) {
   return datalist?.includes(input) ? undefined : NOT_IN_DATALIST;
 }
+
 export function validate(form: any, validators: { [key: string]: any[] }) {
   const errors: { [key: string]: any } = {};
-
   Object.entries(validators).forEach(([field, validatorFuncs]) => {
     const fieldValue = form[field];
     const runValidator = (validator: any, value: any) => {

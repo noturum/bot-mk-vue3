@@ -9,6 +9,7 @@ import MyReviewsMenu from "@/components/menu/MyReviewsMenu.vue";
 import CheckUserMenu from "@/components/menu/CheckUserMenu.vue";
 import SearchMenu from "@/components/menu/SearchMenu.vue";
 import ErrorMenu from "@/components/menu/ErrorMenu.vue";
+import BlockMenu from "./BlockMenu.vue";
 
 export function getMenues() {
   return {
@@ -23,5 +24,6 @@ export function getMenues() {
     myReviews: MyReviewsMenu,
     report: ReportMenu,
     error: ErrorMenu,
+    block: BlockMenu,
   };
 }

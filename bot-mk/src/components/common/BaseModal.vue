@@ -1,7 +1,11 @@
 <template>
-  <div class="modal overflow-hidden">
+  <div
+    v-if="isVisible(props.name)"
+    class="position-fixed z-3  h-100 top-0 overflow-hidden"
+    @click.self="closeModal(props.name)"
+  >
     <div
-      class="modal-dialog h-100 d-flex justify-content-center align-items-center flex-column"
+      class=" h-100 d-flex justify-content-center align-items-center flex-column"
     >
       <div
         class="w-100 h-100 position-absolute"
@@ -11,4 +15,10 @@
     </div>
   </div>
 </template>
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { useModalStore } from "@/stores/modal";
+const props = defineProps<{ name: string }>();
+const modalStore = useModalStore();
+const { isVisible, closeModal } = modalStore;
+modalStore.registerModal(props.name);
+</script>

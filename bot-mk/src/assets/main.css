@@ -226,6 +226,9 @@ nav-item {
 .edit {
   content: url("./edit_icon.svg");
 }
+.btn-group:empty {
+  height: 0px;
+}
 
 .remove {
   content: url("./remove_icon.svg");

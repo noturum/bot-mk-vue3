@@ -39,46 +39,10 @@
           v-model:data="form.transfers[index - 1].city"
           v-model:transfer-id="form.transfers[index - 1].id"
           :errors="
-            errorsForm.transfers
-              ? errorsForm.transfers[index - 1]
-              : undefined
+            errorsForm.transfers ? errorsForm.transfers[index - 1] : undefined
           "
         >
         </InputTransfer>
-        <!-- <div class="mb-3 position-relative" v-for="index in countTransfer">
-          <div class="position-relative transfer-form">
-            <label class="form-label" for="transfer_city"
-              >Город пересадки</label
-            >
-            <div class="d-flex mt-1 align-items-start">
-              <input
-                class="form-control"
-                id="id-transfer"
-                name="id-transfer"
-                type="hidden"
-                v-model="form.transfers[index - 1].id"
-              />
-              <BaseInput
-                :errors="
-                  errorsForm.transfers && errorsForm.transfers.length > 0
-                    ? errorsForm.transfers[index - 1]
-                    : undefined
-                "
-                type="search"
-                :id="'transfer' + index"
-                v-model:data="form.transfers[index - 1].city"
-                :datalist="cities"
-              ></BaseInput>
-              <button
-                type="button"
-                class="btn remove_transfer ml-2"
-                @click="deleteTransfer(index - 1)"
-              >
-                X
-              </button>
-            </div>
-          </div>
-        </div> -->
       </template>
     </BaseInput>
     <BaseInput
@@ -119,12 +83,12 @@
 </template>
 
 <script setup lang="ts">
-import { computed, reactive, toRaw, ref } from "vue";
+import { computed, toRaw, ref } from "vue";
 import api from "@/Api";
 import InputTransfer from "../common/InputTransfer.vue";
 import BaseInput from "../common/BaseInput.vue";
 import BaseButton from "../common/BaseButton.vue";
-import type { Request, Transfer, ErrorRequest } from "@/helper/types";
+import type { Request, Transfer, ErrorRequest, Response } from "@/helper/types";
 import { useRequestStore } from "@/stores/request";
 import { useCitiesStore } from "@/stores/cities";
 import { useToastsStore } from "@/stores/toasts";
@@ -145,8 +109,7 @@ const emits = defineEmits<{
 const countTransfer = computed(() => form.transfers?.length);
 
 const addTransfer = () => {
-  if (countTransfer.value < 3)
-    form.transfers.push({ city: "" });
+  if (countTransfer.value < 3) form.transfers.push({ city: "" });
 };
 const deleteTransfer = (ind: number) => {
   form.transfers?.splice(ind, 1);
@@ -158,14 +121,19 @@ const submitForm = () => {
     dateIn: [isExpired],
     contacts: [isEmpty],
     description: [isEmpty],
-    transfers: [[isEmpty,'city']],
+    transfers: [[isEmpty, "city"]],
   });
   errorsForm.value = errors;
   if (isValid)
-    api.post("/create_request", getForm()).then(() => {
-      emits("setMenu", "main");
-      addToast("Create Request", 2000);
-      requestStore.clearForm();
+    api.post<Response>("/create_request", getForm()).then((response) => {
+      if (response.status == "success") {
+        emits("setMenu", "main");
+        addToast("Заявка создана", 2000);
+        requestStore.clearForm();
+      }
+      if (response.status == "error") {
+        addToast(response.error, 5000);
+      }
     });
 };
 const getForm = () => {

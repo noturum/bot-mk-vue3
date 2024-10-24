@@ -28,17 +28,17 @@ import api from "@/Api";
 import type { Request } from "@/helper/types";
 import { ACCEPT_REQUEST } from "@/helper/strings";
 const userStore = useUserStore();
-const { getSuggestion } = userStore;
+const { loadMyProfile } = userStore;
 const acceptRequest = (request: Request) => {
   const data = {
     receiverRequest: request.id,
-    senderRequest: userStore.myRequest[0].id,
+    senderRequest: userStore.activeRequestId(),
   };
   api.post(ACCEPT_REQUEST, data).then(() => {
-    getSuggestion();
+    loadMyProfile();
   });
 };
 onMounted(() => {
-  getSuggestion();
+  // getSuggestion();
 });
 </script>

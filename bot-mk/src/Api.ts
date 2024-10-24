@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useAuthStore } from "./stores/auth";
+import { useUserStore } from "./stores/user";
 import type {
   AxiosInstance,
   InternalAxiosRequestConfig,
@@ -26,8 +26,8 @@ class ApiService {
   private handleRequest(
     config: InternalAxiosRequestConfig
   ): InternalAxiosRequestConfig {
-    const { id } = useAuthStore();
-    config.headers["X-User-Id"] = id;
+    const { user } = useUserStore();
+    config.headers["X-User-Id"] = user.id;
     return config;
   }
 
@@ -53,8 +53,7 @@ class ApiService {
     data: any,
     config?: InternalAxiosRequestConfig
   ): Promise<T> {
-    const jstring = JSON.stringify(data);
-    const response = await this.axiosInstance.post<T>(url, jstring, config);
+    const response = await this.axiosInstance.post<T>(url, data, config);
     return response.data;
   }
 
@@ -75,5 +74,5 @@ class ApiService {
     return response.data;
   }
 }
-const api = new ApiService()
+const api = new ApiService();
 export default api;

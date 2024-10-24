@@ -1,7 +1,7 @@
 <template>
   <Teleport to="body"><BaseToast /></Teleport>
-
-  <component v-if="authStore.error" :is="menues['error']" />
+  <component v-if="userStore.user.blocked" :is="menues['block']" />
+  <component v-else-if="userStore.error" :is="menues['error']" />
   <div
     v-else
     class="container welcome-container d-flex flex-column align-items-center justify-content-start mx-auto pt-5 overflow-auto"
@@ -34,6 +34,7 @@
         id="my-profile-link"
         :icon="getIconUrl('profile_icon.svg')"
         :is-active="activeMenu === 'profile'"
+        :notify="userStore.notify"
         @click="linkNavMenu('profile')"
       />
       <BaseNavElement
@@ -57,11 +58,11 @@ import BaseNavElement from "@/components/common/BaseNavElement.vue";
 import BaseToast from "@/components/common/BaseToast.vue";
 import { getMenues } from "./components/menu/Menues";
 import { useTelegramStore } from "./stores/telegram";
-import { useAuthStore } from "./stores/auth";
+import { useUserStore } from "./stores/user";
 import { useCitiesStore } from "./stores/cities";
 import { MENU_TITLES } from "./helper/strings";
 const { getCities } = useCitiesStore();
-const authStore = useAuthStore();
+const userStore = useUserStore();
 const telegram = useTelegramStore();
 const showNav = ref(false);
 const title = ref("");
@@ -84,7 +85,7 @@ onMounted(() => {
   const initData = { id: 23 };
   if (initData) {
     telegram.initData = initData;
-    authStore.auth(initData.id);
+    userStore.auth(initData.id);
     getCities();
   }
 });
