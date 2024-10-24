@@ -84,7 +84,7 @@ watch(activeMenu, (_, old) => {
 onMounted(() => {
   telegram.loadTelegram();
   if (telegram.initData) {
-    userStore.auth(telegram.initData.id);
+    userStore.auth(telegram.initData.user.id);
     getCities();
   }
 });

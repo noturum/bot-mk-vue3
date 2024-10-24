@@ -13,7 +13,7 @@ export interface Response {
   error?: string;
 }
 export interface InitData {
-  id: number;
+  user: { id: number };
 }
 export interface Transfer {
   id?: number;
