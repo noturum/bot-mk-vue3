@@ -82,10 +82,9 @@ watch(activeMenu, (_, old) => {
   lastMenu.value = old;
 });
 onMounted(() => {
-  const initData = { id: 23 };
-  if (initData) {
-    telegram.initData = initData;
-    userStore.auth(initData.id);
+  telegram.loadTelegram();
+  if (telegram.initData) {
+    userStore.auth(telegram.initData.id);
     getCities();
   }
 });

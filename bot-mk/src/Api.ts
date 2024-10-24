@@ -5,7 +5,7 @@ import type {
   InternalAxiosRequestConfig,
   AxiosResponse,
 } from "axios";
-const HOST = "http://localhost:8082";
+const HOST = "http://178.217.101.143:8082";
 
 class ApiService {
   private axiosInstance: AxiosInstance;
